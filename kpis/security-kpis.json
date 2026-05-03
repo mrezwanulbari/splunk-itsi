@@ -1,0 +1,90 @@
+{
+  "kpi_definitions": [
+    {
+      "kpi_id": "sec_001",
+      "title": "Security Event Ingestion Rate",
+      "description": "Measures the rate of security-relevant events being ingested into the SIEM platform",
+      "base_search": "index=_internal source=*metrics.log group=per_index_thruput series=idx_security* | stats sum(ev) as events_per_interval",
+      "search_schedule": "*/5 * * * *",
+      "calculation": "avg",
+      "threshold_levels": {
+        "critical_low": 100,
+        "warning_low": 500,
+        "normal_low": 1000,
+        "normal_high": 50000,
+        "warning_high": 75000,
+        "critical_high": 100000
+      },
+      "unit": "events/5min",
+      "service_mapping": ["SIEM Platform Health"],
+      "entity_split_field": "index",
+      "urgency": "high"
+    },
+    {
+      "kpi_id": "sec_002",
+      "title": "Correlation Search Execution Health",
+      "description": "Tracks the success rate and performance of security correlation searches",
+      "base_search": "index=_internal source=*scheduler.log savedsearch_name=*correlation* | stats count(eval(status=\"success\")) as success, count(eval(status=\"failed\")) as failed, count as total | eval health_pct=round(success/total*100,2)",
+      "search_schedule": "*/15 * * * *",
+      "calculation": "latest",
+      "threshold_levels": {
+        "critical_low": 80,
+        "warning_low": 90,
+        "normal_low": 95,
+        "normal_high": 100
+      },
+      "unit": "percent",
+      "service_mapping": ["Threat Detection"],
+      "urgency": "high"
+    },
+    {
+      "kpi_id": "sec_003",
+      "title": "Authentication Failure Rate",
+      "description": "Monitors the rate of authentication failures across all identity sources",
+      "base_search": "index=auth action=failure | timechart span=5m count as failure_count",
+      "search_schedule": "*/5 * * * *",
+      "calculation": "avg",
+      "threshold_levels": {
+        "normal_high": 50,
+        "warning_high": 200,
+        "critical_high": 500
+      },
+      "unit": "failures/5min",
+      "service_mapping": ["Identity & Access"],
+      "entity_split_field": "src",
+      "urgency": "high"
+    },
+    {
+      "kpi_id": "sec_004",
+      "title": "Malware Detection Count",
+      "description": "Tracks malware detections across endpoint protection platforms",
+      "base_search": "index=endpoint sourcetype=*antivirus* action=blocked OR action=quarantined | stats count by signature, host",
+      "search_schedule": "*/15 * * * *",
+      "calculation": "sum",
+      "threshold_levels": {
+        "normal_high": 10,
+        "warning_high": 50,
+        "critical_high": 100
+      },
+      "unit": "detections/15min",
+      "service_mapping": ["Threat Detection"],
+      "urgency": "high"
+    },
+    {
+      "kpi_id": "sec_005",
+      "title": "Vulnerability Scan Coverage",
+      "description": "Percentage of assets scanned within the defined scan window",
+      "base_search": "index=vulnerability sourcetype=*scan_result* | stats dc(dest) as scanned_assets | appendcols [| inputlookup asset_inventory.csv | stats count as total_assets] | eval coverage=round(scanned_assets/total_assets*100,2)",
+      "search_schedule": "0 */6 * * *",
+      "calculation": "latest",
+      "threshold_levels": {
+        "critical_low": 70,
+        "warning_low": 85,
+        "normal_low": 95
+      },
+      "unit": "percent",
+      "service_mapping": ["Vulnerability Management"],
+      "urgency": "medium"
+    }
+  ]
+}
