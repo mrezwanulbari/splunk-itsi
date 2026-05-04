@@ -318,6 +318,15 @@ The SOC Overview glass table provides a real-time visual representation of:
 
 ---
 
+## Installation:
+```bash
+git clone https://github.com/mrezwanulbari/Splunk-ITSI-Predictive-FinOps-Monitoring-Engine.git
+cd Splunk-ITSI-Predictive-FinOps-Monitoring-Engine
+python install_dependencies.py
+```
+
+---
+
 ## Contributing
 
 Contributions are welcome! Please read our contributing guidelines and submit pull requests.
