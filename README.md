@@ -1,4 +1,4 @@
-# Splunk IT Service Intelligence (ITSI) — Service Monitoring & Operational Resilience
+# Splunk ITSI Predictive FinOps Monitoring Engine - Predictive monitoring for cost and performance using Splunk ITSI
 
 ![Splunk](https://img.shields.io/badge/Splunk-000000?style=for-the-badge&logo=splunk&logoColor=white)
 ![ITSI](https://img.shields.io/badge/ITSI-Service_Intelligence-blue?style=for-the-badge)
